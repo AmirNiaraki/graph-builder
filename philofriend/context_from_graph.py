@@ -21,16 +21,16 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
-load_dotenv()
+# load_dotenv()
 
 class Neo4jConnection:
     def __init__(self):
         # uri = os.getenv("NEO4J_URI")
         # user = os.getenv("NEO4J_USERNAME")
         # password = os.getenv("NEO4J_PASSWORD")
-        uri = "neo4j+s://06e4c224.databases.neo4j.io"
+        uri = "neo4j+s://40d8f9d4.databases.neo4j.io"
         user= "neo4j"
-        password= "4G0Zho5qR74tXjkiSYOxu9B08jYvbt5quK1UqImIK90"
+        password= "8MEJLK5t3V62n3CKQL1UMzyJGVgkV36UjoKdCLtbt4w"
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
         logger.info("Connected to Neo4j graph")
 
@@ -199,6 +199,8 @@ class GraphSearch:
 # This context needs to be summarized by another model
 graph=GraphSearch()
 # contexts = graph.get_context(concept="Geist", person="Hegel", context_type="details")
-contexts = graph.get_context(concept="Soul", person="Hegel", context_type="details")
+contexts = graph.get_context(concept="God", context_type="details")
 
-print(contexts[0], contexts[10])
+for i in contexts:
+    print(i)
+# print(contexts[0], contexts[10])

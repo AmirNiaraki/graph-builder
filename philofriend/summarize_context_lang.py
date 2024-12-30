@@ -210,7 +210,7 @@ def chat_bot(contexts):
         
 
 
-ranker = RelevanceRanker()
+# ranker = RelevanceRanker()
 graph = GraphSearch()
 # contexts = graph.get_context(concept="Geist", person="Hegel", context_type="details")
 contexts = graph.get_context(concept="God", context_type="details")
