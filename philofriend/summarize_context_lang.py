@@ -64,14 +64,17 @@ const promptTemplate = `
 
 '''
 # from langchain.embeddings import OpenAIEmbeddings
-from langchain_community.embeddings import OpenAIEmbeddings
+# from langchain_community.embeddings import OpenAIEmbeddings
 # from langchain.vectorstores import FAISS
-from langchain_community.vectorstores import FAISS
+# from langchain_community.vectorstores import FAISS
 from context_from_graph import GraphSearch
 from typing import List, Tuple, Dict
 import os
 from dotenv import load_dotenv
-
+from langchain_core.messages import HumanMessage
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
+logger = logging.getLogger(__name__)
 # load the LLM model
 from langchain.chat_models import ChatOpenAI
 
@@ -83,7 +86,7 @@ from langchain.chains.question_answering import load_qa_chain
 # from langchain_core.output_parsers import StrOutputParser
 
 
-load_dotenv()
+load_dotenv('/mnt/c/Users/amire/Desktop/graph-builder/philofriend/ENV.env')
 
 class RelevanceRanker:
     ''''
@@ -156,43 +159,45 @@ def pre_process_contexts(contexts):
     return all_texts_str
 
 def chat_bot(contexts):
-    all_texts_str = pre_process_contexts(contexts)
+    # all_texts_str = pre_process_contexts(contexts)
+    for context in contexts:
+        logger.info(f"list of all viable contexts: {context}")
     ##
-    print('processed contexts', all_texts_str, type())
+    # print('processed contexts', all_texts_str)
+    example_context = contexts[1]
 
 
 
-    model_name = "gpt-3.5-turbo"
-    llm = ChatOpenAI(model_name=model_name)
+    # model_name = "gpt-3.5-turbo"
+    # model_name = "gpt-4o"
+    # llm = ChatOpenAI(model_name=model_name)
 
 
 
-    chain = load_qa_chain(llm, chain_type="stuff",verbose=True)
+    # chain = load_qa_chain(llm, chain_type="stuff",verbose=True)
 
     # write your query and perform similarity search to generate an answer
     query = "What are the emotional benefits of owning a pet?"
-    matching_docs = db.similarity_search(query)
-    answer =  chain.run(input_documents=matching_docs, question=query)
-    answer
-    # import streamlit as st
-    import os
-    from dotenv import load_dotenv
+    # matching_docs = db.similarity_search(query)
+    # answer =  chain.run(input_documents=matching_docs, question=query)
+    # answer
+    # # import streamlit as st
 
     os.environ["OPENAI_API_KEY"]=os.getenv("OPENAI_API_KEY")
     ## Langmith tracking
     os.environ["LANGCHAIN_TRACING_V2"]="true"
     os.environ["LANGCHAIN_API_KEY"]=os.getenv("LANGCHAIN_API_KEY")
 
-    ## Prompt Template
+    # ## Prompt Template
 
-    prompt=ChatPromptTemplate.from_messages(
-        [
-            ("system","You are a helpful assistant. Please response to the user queries, \
-             it will contain areference prompt and then a list of dictionaries full of text you are supposed to return the reference \
-             "),
-            ("user","Question:{question}")
-        ]
-    )
+    # prompt=ChatPromptTemplate.from_messages(
+    #     [
+    #         ("system","You are a helpful assistant. Please response to the user queries, \
+    #          it will contain areference prompt and then a list of dictionaries full of text you are supposed to return the reference \
+    #          "),
+    #         ("user","Question:{question}")
+    #     ]
+    # )
 
     ## streamlit framework
 
@@ -200,14 +205,20 @@ def chat_bot(contexts):
     # input_text=st.text_input("Search the topic u want")
 
     # openAI LLm 
-    llm=ChatOpenAI(model="gpt-3.5-turbo")
-    output_parser=StrOutputParser()
-    chain=prompt|llm|output_parser
-    print(chain)
+    model=ChatOpenAI(model="gpt-3.5-turbo")
+    
+    output=model.invoke([HumanMessage(content="Hi! I'm Bob and this is what I know about god"+example_context['text'])])
+    
+    print(output)
+    # output_parser=StrOutputParser()
+    # chain=prompt|llm|output_parser
+    # print(chain)
 
         # if input_text:
         #     st.write(chain.invoke({'question':input_text}))
         
+
+
 
 
 # ranker = RelevanceRanker()
@@ -215,7 +226,7 @@ graph = GraphSearch()
 # contexts = graph.get_context(concept="Geist", person="Hegel", context_type="details")
 contexts = graph.get_context(concept="God", context_type="details")
 
-print('ALL CONTEXTS retrieved', len(contexts))
+# print('ALL CONTEXTS retrieved', len(contexts))
 # for i, ctx in enumerate(contexts):
 #     print(f"\nContext {i}:")
 #     print(f"Text: {ctx['text']}")

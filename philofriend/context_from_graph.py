@@ -17,22 +17,32 @@ from typing import List, Dict, Optional, Any
 from dotenv import load_dotenv
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d  - %(message)s ')
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 # load_dotenv()
 
+# Load the .env file
+load_dotenv('/mnt/c/Users/amire/Desktop/graph-builder/philofriend/ENV.env')
+
 class Neo4jConnection:
     def __init__(self):
-        # uri = os.getenv("NEO4J_URI")
-        # user = os.getenv("NEO4J_USERNAME")
-        # password = os.getenv("NEO4J_PASSWORD")
-        uri = "neo4j+s://40d8f9d4.databases.neo4j.io"
-        user= "neo4j"
-        password= "8MEJLK5t3V62n3CKQL1UMzyJGVgkV36UjoKdCLtbt4w"
-        self.driver = GraphDatabase.driver(uri, auth=(user, password))
-        logger.info("Connected to Neo4j graph")
+        try:
+            load_dotenv()
+            uri = os.getenv("NEO4J_URI")
+            user = os.getenv("NEO4J_USERNAME")
+            password = os.getenv("NEO4J_PASSWORD")
+
+            if not uri:
+                raise ValueError("Missing NEO4J_URI, check the .env file path")
+
+            self.driver = GraphDatabase.driver(uri, auth=(user, password))
+            logger.info("Connected to Neo4j graph")
+        
+        except Exception as e:
+            logger.error(f"Failed to connect to Neo4j graph: {str(e)}")
+            raise
 
     def close(self):
         self.driver.close()
@@ -196,11 +206,41 @@ class GraphSearch:
                     formatted.append(f"{key}: {', '.join([f'{k}: {v}' for k, v in value.items()])}")
         return formatted
 
+    def get_concepts(self, sort: bool = False) -> Dict[str, int]:
+        try:
+            concepts_query = """
+            MATCH (concept:Concept)-[r]-(chunk:Chunk)
+            RETURN concept.id AS concept_name, count(chunk) AS chunk_count
+            """
+            results = self.connection.execute_query(concepts_query)
+            logger.info("Executed query to get all concepts and their chunk counts")
+
+            # Create a dictionary from the results
+            concepts_dict = {result['concept_name']: result['chunk_count'] for result in results}
+
+            # Sort the dictionary if sort is True
+            if sort:
+                concepts_dict = dict(sorted(concepts_dict.items(), key=lambda item: item[1], reverse=True))
+                logger.info("Sorted concepts by chunk count in descending order")
+
+            logger.info(f"Found {len(concepts_dict)} concepts with related chunks")
+
+            return concepts_dict
+
+        except Exception as e:
+            logger.error(f"Error in get_concepts: {str(e)}")
+            return {}
+
 # This context needs to be summarized by another model
 graph=GraphSearch()
+# # Example usage for getting context
 # contexts = graph.get_context(concept="Geist", person="Hegel", context_type="details")
-contexts = graph.get_context(concept="God", context_type="details")
+# contexts = graph.get_context(concept="Existence of God", context_type="details")
 
-for i in contexts:
-    print(i)
-# print(contexts[0], contexts[10])
+# # for i in contexts:
+# #     print(i)
+
+
+# # Example usage for getting all concepts
+# concepts = graph.get_concepts(sort=True)
+# print(concepts)
