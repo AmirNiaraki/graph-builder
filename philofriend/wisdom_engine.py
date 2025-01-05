@@ -106,7 +106,7 @@ class WisdomEngine:
         # Retrieve the relevant story details using the index
         relevant_story = context[relevant_story_index]
         relevant_text = relevant_story['text']
-        relevant_file = relevant_story['fileName']
+        relevant_file = relevant_story['fileName'].replace('.pdf', '. Creative Commons License.')
         relevant_page = relevant_story['page_number']
         
         return relevant_text, relevant_file, relevant_page

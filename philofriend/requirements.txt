@@ -6,3 +6,5 @@ argparse
 streamlit
 Flask
 gunicorn
+
+requests
