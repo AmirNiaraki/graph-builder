@@ -1,0 +1,6 @@
+logging
+neo4j
+python-dotenv
+langchain_openai
+argparse
+streamlit
