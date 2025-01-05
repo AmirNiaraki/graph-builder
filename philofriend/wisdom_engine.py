@@ -91,6 +91,7 @@ class WisdomEngine:
         {text_list}
         is most relevant to the user's query? {input_summary} 
 
+        you have to return something, no answer is not acceptable.
         provide your answer exactly in two lines, the first line is the index of the text in the list of texts
         and the second line is the text itself given that indexing starts from 0. like this:
         12
@@ -112,6 +113,7 @@ class WisdomEngine:
 
 # chat_bot(contexts)
 if __name__ == "__main__":
+
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Process reflection summary for WisdomEngine.")
     parser.add_argument('-rs', '--reflection_summary', type=str, default="What is the meaning of life?", 
