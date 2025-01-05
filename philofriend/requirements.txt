@@ -4,3 +4,5 @@ python-dotenv
 langchain_openai
 argparse
 streamlit
+Flask
+gunicorn
