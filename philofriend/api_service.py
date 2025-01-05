@@ -34,7 +34,7 @@ class WisdomEngine:
 
 
 
-    def find_relevant_discoveries(self, number_of_concepts: int = 3, input_summary: str = "I'm lost"):
+    def find_relevant_discoveries(self, number_of_concepts: int = 1, input_summary: str = "I'm lost"):
         #TODO: use the value which is number of relationships each concept has
         concepts_dict = self.graph.get_concepts(sort=True)
         print(concepts_dict)
