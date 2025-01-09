@@ -1,6 +1,10 @@
 '''
 python3  -m streamlit run streamlit_app.py
 nohup python3  -m streamlit run streamlit_app.py &
+
+check for running instances:
+pstree -p
+watch --color -n 0.1 'pstree -pa 1452 | grep --color=always python3'
 '''
 
 import streamlit as st
